@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R语言小精灵</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .chat-container {
+            width: 100%;
+            max-width: 800px;
+            height: 90vh;
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        .chat-header {
+            background-color: #4a76a8;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 500;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .message {
+            max-width: 70%;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            position: relative;
+            line-height: 1.5;
+            font-size: 16px;
+        }
+        .ning {
+            background-color: #e9f0f8;
+            margin-right: auto;
+            border-bottom-left-radius: 0;
+        }
+        .little-elf-r {
+            background-color: #dcf8c6;
+            margin-left: auto;
+            border-bottom-right-radius: 0;
+        }
+        .sender {
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #4a76a8;
+        }
+        .timestamp {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+            text-align: right;
+        }
+        .input-area {
+            display: flex;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .input-box {
+            flex-grow: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .send-button, .copy-button {
+            margin-left: 10px;
+            padding: 15px 25px;
+            background-color: #4a76a8;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .send-button:hover, .copy-button:hover {
+            background-color: #3a5a78;
+        }
+        .typing-indicator {
+            padding: 10px;
+            background-color: #e9f0f8;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            display: none;
+        }
+        .typing-indicator span {
+            height: 10px;
+            width: 10px;
+            float: left;
+            margin: 0 1px;
+            background-color: #9E9EA1;
+            display: block;
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+        .typing-indicator span:nth-of-type(1) { animation: 1s blink infinite 0.3333s; }
+        .typing-indicator span:nth-of-type(2) { animation: 1s blink infinite 0.6666s; }
+        .typing-indicator span:nth-of-type(3) { animation: 1s blink infinite 0.9999s; }
+        @keyframes blink {
+            50% { opacity: 1; }
+        }
+        .author {
+            position: absolute;
+            bottom: 70px;
+            left: 10px;
+            font-size: 12px;
+            color: #999;
+        }
+        .content {
+            white-space: pre-wrap;
+        }
+        .copy-button {
+            font-size: 12px;
+            padding: 5px 10px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">R语言小精灵</div>
+        <div id="chat-messages" class="chat-messages">
+            <!-- 消息将在这里动态添加 -->
+        </div>
+        <div id="typing-indicator" class="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="input-area">
+            <input type="text" id="user-input" class="input-box" placeholder="输入消息...">
+            <button onclick="sendMessage()" class="send-button">发送</button>
+        </div>
+        <div class="author">by Tyler Coman</div>
+    </div>
+
+    <script>
+        const API_KEY = 'app-3VlBQgR45jfaiJEY80yil2vq';
+        const API_URL = 'https://api.dify.ai/v1/chat-messages';
+
+        let conversationId = null;
+        const userId = 'user_' + Math.random().toString(36).substr(2, 9);
+
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input').value;
+            if (!userInput.trim()) return;
+
+            addMessage('User', userInput);
+            document.getElementById('user-input').value = '';
+            showTypingIndicator();
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        inputs: {},
+                        query: userInput,
+                        user: userId,
+                        response_mode: 'blocking',
+                        conversation_id: conversationId
+                    })
+                });
+
+                const data = await response.json();
+                hideTypingIndicator();
+
+                if (response.ok) {
+                    if (data.answer) {
+                        addMessage('Little Elf R', data.answer);
+                        conversationId = data.conversation_id;
+                    } else {
+                        addMessage('Little Elf R', '抱歉，我没有得到有效的回答。');
+                    }
+                } else {
+                    addMessage('Little Elf R', `错误: ${data.message || '未知错误'}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                hideTypingIndicator();
+                addMessage('Little Elf R', '发生网络错误，请稍后再试。');
+            }
+        }
+
+        function addMessage(sender, content) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender.toLowerCase().replace(/\s+/g, '-')}`;
+            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            messageDiv.innerHTML = `
+                <div class="sender">${sender}</div>
+                <div class="content">${content}</div>
+                <div class="timestamp">${timestamp}</div>
+                <button onclick="copyMessage(this)" class="copy-button">复制</button>
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            document.getElementById('typing-indicator').style.display = 'block';
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typing-indicator').style.display = 'none';
+        }
+
+        document.getElementById('user-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function copyMessage(button) {
+            const messageDiv = button.closest('.message');
+            const content = messageDiv.querySelector('.content').innerText;
+            navigator.clipboard.writeText(content).then(() => {
+                alert('消息已复制到剪贴板！');
+            }).catch(err => {
+                console.error('复制失败:', err);
+                alert('复制失败，请手动复制。');
+            });
+        }
+    </script>
+</body>
+</html>
