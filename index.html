@@ -10,7 +10,7 @@
             font-family: 'Noto Sans SC', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f0f2f5;
+            background-color: #f5e6d3;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -20,20 +20,20 @@
             width: 100%;
             max-width: 800px;
             height: 90vh;
-            background-color: #fff;
+            background-color: #faf6f0;
             border-radius: 20px;
-            box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+            box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.1), 0 2px 4px 0 rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
             overflow: hidden;
             position: relative;
         }
         .chat-header {
-            background-color: #4a76a8;
+            background-color: #8b4513;
             color: white;
-            padding: 20px;
+            padding: 10px; /* 从20px减小到10px */
             text-align: center;
-            font-size: 24px;
+            font-size: 20px; /* 可以适当减小字体大小 */
             font-weight: 500;
         }
         .chat-messages {
@@ -51,12 +51,12 @@
             font-size: 16px;
         }
         .ning {
-            background-color: #e9f0f8;
+            background-color: #f5e6d3;
             margin-right: auto;
             border-bottom-left-radius: 0;
         }
         .little-elf-r {
-            background-color: #dcf8c6;
+            background-color: #e6ccb2;
             margin-left: auto;
             border-bottom-right-radius: 0;
         }
@@ -74,12 +74,12 @@
         .input-area {
             display: flex;
             padding: 20px;
-            background-color: #f0f2f5;
+            background-color: #faf6f0;
         }
         .input-box {
             flex-grow: 1;
             padding: 15px;
-            border: none;
+            border: 1px solid #e6ccb2;
             border-radius: 30px;
             font-size: 16px;
             background-color: #fff;
@@ -88,7 +88,7 @@
         .send-button, .copy-button, .start-chat-button {
             margin-left: 10px;
             padding: 15px 25px;
-            background-color: #4a76a8;
+            background-color: #8b4513;
             color: white;
             border: none;
             border-radius: 30px;
@@ -97,11 +97,11 @@
             transition: background-color 0.3s;
         }
         .send-button:hover, .copy-button:hover, .start-chat-button:hover {
-            background-color: #3a5a78;
+            background-color: #a0522d;
         }
         .typing-indicator {
             padding: 10px;
-            background-color: #e9f0f8;
+            background-color: #f5e6d3;
             border-radius: 20px;
             margin-bottom: 10px;
             display: none;
@@ -111,7 +111,7 @@
             width: 10px;
             float: left;
             margin: 0 1px;
-            background-color: #9E9EA1;
+            background-color: #8b4513;
             display: block;
             border-radius: 50%;
             opacity: 0.4;
@@ -152,7 +152,15 @@
         .start-chat-button {
             padding: 20px 40px;
             font-size: 24px;
-            background-color: #4a76a8;
+            background-color: #faf6f0;
+            color: #8b4513;
+            border: 2px solid #8b4513;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .start-chat-button:hover {
+            background-color: #f5e6d3;
         }
     </style>
 </head>
@@ -261,10 +269,19 @@
             const messageDiv = button.closest('.message');
             const content = messageDiv.querySelector('.content').innerText;
             navigator.clipboard.writeText(content).then(() => {
-                alert('消息已复制到剪贴板！');
+                // 更改按钮文本为 ✓
+                button.textContent = '✓';
+                // 设置一个定时器，2秒后将按钮文本改回 "复制"
+                setTimeout(() => {
+                    button.textContent = '复制';
+                }, 2000);
             }).catch(err => {
                 console.error('复制失败:', err);
-                alert('复制失败，请手动复制。');
+                // 如果复制失败，可以短暂地将按钮文本改为 "失败"
+                button.textContent = '失败';
+                setTimeout(() => {
+                    button.textContent = '复制';
+                }, 2000);
             });
         }
 
