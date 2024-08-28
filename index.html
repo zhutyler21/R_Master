@@ -70,6 +70,11 @@
             justify-content: center;
             width: 80%;
             box-sizing: border-box;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .new-chat-button.show {
+            opacity: 1;
         }
         .new-chat-button:hover {
             background-color: #e6ccb2;
@@ -304,6 +309,21 @@
             text-align: center;
             margin-top: 5px;
             padding: 0 20px;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .history-note.show {
+            opacity: 1;
+        }
+
+        .new-chat-button, .history-note {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .new-chat-button.show, .history-note.show {
+            opacity: 1;
         }
     </style>
 </head>
@@ -476,7 +496,6 @@
             currentChatId = null;
             conversationId = null;
             
-            // 发送"开始聊天"的查询，但不显示在界面上
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
@@ -514,7 +533,6 @@
             const historyItem = document.createElement('div');
             historyItem.className = 'chat-history-item';
             
-            // 修改这里的日期格式
             const formattedDate = new Date().toLocaleString('zh-CN', {
                 year: 'numeric',
                 month: '2-digit',
@@ -551,7 +569,6 @@
                 titleSpan.textContent = editInput.value;
                 titleSpan.style.display = 'block';
                 editInput.style.display = 'none';
-                // 这里可以添加保存新标题到本地存储的逻辑
             };
             editInput.onkeypress = (e) => {
                 if (e.key === 'Enter') {
@@ -560,6 +577,13 @@
             };
             chatHistoryList.appendChild(historyItem);
             updateActiveChat(id);
+
+            showNewChatButtonAndHistoryNote();
+        }
+
+        function showNewChatButtonAndHistoryNote() {
+            document.querySelector('.new-chat-button').classList.add('show');
+            document.querySelector('.history-note').classList.add('show');
         }
 
         function updateActiveChat(chatId) {
@@ -591,7 +615,7 @@
         }
 
         function deleteChat(chatId, event) {
-            event.stopPropagation(); // 阻止事件冒泡
+            event.stopPropagation();
             const chatItem = document.querySelector(`.chat-history-item[data-chat-id="${chatId}"]`);
             if (chatItem) {
                 chatItem.remove();
