@@ -171,7 +171,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               className={currentChatId === chat.id ? 'active' : ''}
               onClick={() => setCurrentChatId(chat.id)}
               onDoubleClick={(e) => {
-                const titleElement = e.currentTarget.querySelector('.title');
+                const titleElement = e.currentTarget.querySelector('.title') as HTMLElement;
                 const inputElement = e.currentTarget.querySelector('.edit-title') as HTMLInputElement;
                 if (titleElement && inputElement) {
                   titleElement.style.display = 'none';
@@ -188,7 +188,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                 onBlur={(e) => {
                   editChatTitle(chat.id, e.target.value);
                   e.target.style.display = 'none';
-                  const titleElement = e.currentTarget.parentElement?.querySelector('.title');
+                  const titleElement = e.currentTarget.parentElement?.querySelector('.title') as HTMLElement;
                   if (titleElement) titleElement.style.display = 'inline';
                 }}
                 onKeyPress={(e) => {
