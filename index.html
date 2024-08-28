@@ -513,9 +513,20 @@
             const chatHistoryList = document.querySelector('.chat-history-list');
             const historyItem = document.createElement('div');
             historyItem.className = 'chat-history-item';
+            
+            // 修改这里的日期格式
+            const formattedDate = new Date().toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+            
             historyItem.innerHTML = `
-                <span class="title">${title}</span>
-                <input type="text" class="edit-title" value="${title}">
+                <span class="title">对话 ${formattedDate}</span>
+                <input type="text" class="edit-title" value="对话 ${formattedDate}">
                 <button class="delete-chat" onclick="deleteChat('${id}', event)">×</button>
             `;
             historyItem.dataset.chatId = id;
