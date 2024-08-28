@@ -65,7 +65,15 @@ const ChatContainer: React.FC = () => {
     setConversationId(null);
     const message = await sendInitialMessage(newChatId);
     if (message) {
-      const newChat = { id: newChatId, title: `对话 ${new Date().toLocaleString()}` };
+      // 修改这里的日期格式
+      const formattedDate = new Date().toLocaleString('zh-CN', {
+        month: 'numeric',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+      const newChat = { id: newChatId, title: `对话 ${formattedDate}` };
       setChatHistory(prevHistory => [newChat, ...prevHistory]);
       setInitialMessage(message);
     }
