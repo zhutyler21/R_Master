@@ -17,24 +17,124 @@
             height: 100vh;
         }
         .chat-container {
+            display: flex;
+            flex-direction: column;
             width: 100%;
-            max-width: 800px;
+            max-width: 1200px;
             height: 90vh;
             background-color: #faf6f0;
             border-radius: 20px;
             box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.1), 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-            display: flex;
-            flex-direction: column;
             overflow: hidden;
-            position: relative;
         }
         .chat-header {
             background-color: #8b4513;
             color: white;
-            padding: 10px; /* 从20px减小到10px */
+            padding: 10px;
             text-align: center;
-            font-size: 20px; /* 可以适当减小字体大小 */
+            font-size: 20px;
             font-weight: 500;
+        }
+        .chat-body {
+            display: flex;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        .chat-sidebar {
+            width: 250px;
+            background-color: #f5e6d3;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+        }
+        .sidebar-content {
+            margin-top: 25%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .new-chat-button {
+            padding: 8px;
+            background-color: #d4b08c;
+            color: #8b4513;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 80%;
+            box-sizing: border-box;
+        }
+        .new-chat-button:hover {
+            background-color: #e6ccb2;
+        }
+        .new-chat-button span {
+            margin-right: 8px;
+            font-size: 20px;
+        }
+        .chat-history-list {
+            width: 80%;
+        }
+        .chat-history-item {
+            padding: 8px;
+            padding-left: 16px;
+            margin-bottom: 8px;
+            background-color: #e6ccb2;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 14px;
+            position: relative;
+        }
+        .chat-history-item:hover {
+            background-color: #d4b08c;
+        }
+        .chat-history-item.active {
+            background-color: #8b4513;
+            color: white;
+        }
+        .chat-history-item .edit-title {
+            display: none;
+            width: 100%;
+            padding: 2px;
+            font-size: 14px;
+            border: 1px solid #8b4513;
+            border-radius: 4px;
+        }
+        .delete-chat {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            color: #8b4513;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+        }
+        .delete-chat:hover {
+            opacity: 1;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+        .chat-main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #faf6f0;
         }
         .chat-messages {
             flex-grow: 1;
@@ -75,6 +175,7 @@
             display: flex;
             padding: 20px;
             background-color: #faf6f0;
+            border-top: 1px solid #e6ccb2;
         }
         .input-box {
             flex-grow: 1;
@@ -83,16 +184,16 @@
             border-radius: 30px;
             font-size: 16px;
             background-color: #fff;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* 增加阴影 */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .send-button {
-            width: 50px; /* 设置固定宽度 */
-            height: 50px; /* 设置固定高度 */
+            width: 50px;
+            height: 50px;
             margin-left: 10px;
             background-color: #8b4513;
             color: white;
             border: none;
-            border-radius: 50%; /* 使按钮变成圆形 */
+            border-radius: 50%;
             cursor: pointer;
             font-size: 20px;
             transition: background-color 0.3s;
@@ -132,10 +233,10 @@
         }
         .author {
             position: absolute;
-            bottom: 70px;
-            left: 10px;
-            font-size: 12px;
-            color: #999;
+            bottom: 10px;
+            left: 20px;
+            font-size: 14px;
+            color: #8b4513;
         }
         .content {
             white-space: pre-wrap;
@@ -144,6 +245,16 @@
             font-size: 12px;
             padding: 5px 10px;
             margin-top: 5px;
+            border-radius: 15px;
+            background-color: transparent;
+            border: 1px solid #8b4513;
+            color: #8b4513;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .copy-button:hover {
+            background-color: #8b4513;
+            color: white;
         }
         .start-chat-overlay {
             position: absolute;
@@ -174,28 +285,42 @@
 </head>
 <body>
     <div class="chat-container">
-        <div class="chat-header">🧝‍♂️ R语言小精灵 📈 v0.1</div>
-        <div id="chat-messages" class="chat-messages">
-            <!-- 消息将在这里动态添加 -->
+        <div class="chat-header">🧝‍♂️ R语言小精灵 📈 v0.2</div>
+        <div class="chat-body">
+            <div class="chat-sidebar">
+                <div class="sidebar-content">
+                    <button class="new-chat-button">
+                        <span>✒️</span> 新对话
+                    </button>
+                    <div class="chat-history-list">
+                        <!-- 历史对话记录将在这里动态添加 -->
+                    </div>
+                </div>
+                <div class="author">© Tyler Coman 2024</div>
+            </div>
+            <div class="chat-main">
+                <div id="chat-messages" class="chat-messages">
+                    <!-- 消息将在这里动态添加 -->
+                </div>
+                <div id="typing-indicator" class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="input-area">
+                    <input type="text" id="user-input" class="input-box" placeholder="输入消息...">
+                    <button onclick="sendMessage()" class="send-button">
+                        <svg class="send-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 2L11 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
         </div>
-        <div id="typing-indicator" class="typing-indicator">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-        <div class="input-area">
-            <input type="text" id="user-input" class="input-box" placeholder="输入消息...">
-            <button onclick="sendMessage()" class="send-button">
-                <svg class="send-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M22 2L11 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
-        </div>
-        <div class="author">by Tyler Coman</div>
-        <div id="start-chat-overlay" class="start-chat-overlay">
-            <button onclick="startChat()" class="start-chat-button">开始聊天</button>
-        </div>
+    </div>
+    <div id="start-chat-overlay" class="start-chat-overlay">
+        <button onclick="startChat()" class="start-chat-button">开始聊天</button>
     </div>
 
     <script>
@@ -203,14 +328,17 @@
         const API_URL = 'https://api.dify.ai/v1/chat-messages';
 
         let conversationId = null;
+        let currentChatId = null;
         const userId = 'user_' + Math.random().toString(36).substr(2, 9);
 
-        async function sendMessage() {
-            const userInput = document.getElementById('user-input').value;
-            if (!userInput.trim()) return;
+        async function sendMessage(userInput = null) {
+            const input = userInput || document.getElementById('user-input').value;
+            if (!input.trim()) return;
 
-            addMessage('User', userInput);
-            document.getElementById('user-input').value = '';
+            if (!userInput) {
+                addMessage('User', input);
+                document.getElementById('user-input').value = '';
+            }
             showTypingIndicator();
 
             try {
@@ -222,7 +350,7 @@
                     },
                     body: JSON.stringify({
                         inputs: {},
-                        query: userInput,
+                        query: input,
                         user: userId,
                         response_mode: 'blocking',
                         conversation_id: conversationId
@@ -236,6 +364,12 @@
                     if (data.answer) {
                         addMessage('Elf R', data.answer);
                         conversationId = data.conversation_id;
+                        if (!currentChatId) {
+                            currentChatId = `chat_${Date.now()}`;
+                            addChatHistoryItem(currentChatId, `对话 ${new Date().toLocaleString()}`);
+                        }
+                        saveChatMessage(currentChatId, 'User', input);
+                        saveChatMessage(currentChatId, 'Elf R', data.answer);
                     } else {
                         addMessage('Elf R', '抱歉，我没有得到有效的回答。');
                     }
@@ -255,7 +389,7 @@
             messageDiv.className = `message ${sender.toLowerCase().replace(/\s+/g, '-')}`;
             const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             messageDiv.innerHTML = `
-                <div class="sender">${sender === 'User' ? 'User' : 'Elf R 🪽'}</div>
+                <div class="sender">${sender === 'User' ? 'User' : '~ Elf R 🪽'}</div>
                 <div class="content">${content}</div>
                 <div class="timestamp">${timestamp}</div>
                 <button onclick="copyMessage(this)" class="copy-button">复制</button>
@@ -282,15 +416,12 @@
             const messageDiv = button.closest('.message');
             const content = messageDiv.querySelector('.content').innerText;
             navigator.clipboard.writeText(content).then(() => {
-                // 更改按钮文本为 ✓
                 button.textContent = '✓';
-                // 设置一个定时器，2秒后将按钮文本改回 "复制"
                 setTimeout(() => {
                     button.textContent = '复制';
                 }, 2000);
             }).catch(err => {
                 console.error('复制失败:', err);
-                // 如果复制失败，可以短暂地将按钮文本改为 "失败"
                 button.textContent = '失败';
                 setTimeout(() => {
                     button.textContent = '复制';
@@ -300,7 +431,11 @@
 
         async function startChat() {
             document.getElementById('start-chat-overlay').style.display = 'none';
-            showTypingIndicator();
+            clearChat();
+            currentChatId = null;
+            conversationId = null;
+            
+            // 发送"开始聊天"的查询，但不显示在界面上
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
@@ -317,20 +452,107 @@
                 });
 
                 const data = await response.json();
-                hideTypingIndicator();
 
                 if (response.ok && data.answer) {
                     addMessage('Elf R', data.answer);
                     conversationId = data.conversation_id;
+                    currentChatId = `chat_${Date.now()}`;
+                    addChatHistoryItem(currentChatId, `对话 ${new Date().toLocaleString()}`);
+                    saveChatMessage(currentChatId, 'Elf R', data.answer);
                 } else {
                     addMessage('Elf R', '抱歉，无法开始聊天。请稍后再试。');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                hideTypingIndicator();
                 addMessage('Elf R', '发生网络错误，请稍后再试。');
             }
         }
+
+        function addChatHistoryItem(id, title) {
+            const chatHistoryList = document.querySelector('.chat-history-list');
+            const historyItem = document.createElement('div');
+            historyItem.className = 'chat-history-item';
+            historyItem.innerHTML = `
+                <span class="title">${title}</span>
+                <input type="text" class="edit-title" value="${title}">
+                <button class="delete-chat" onclick="deleteChat('${id}', event)">×</button>
+            `;
+            historyItem.dataset.chatId = id;
+            historyItem.onclick = (e) => {
+                if (!e.target.classList.contains('delete-chat')) {
+                    loadChat(id);
+                }
+            };
+            historyItem.ondblclick = (e) => {
+                if (!e.target.classList.contains('delete-chat')) {
+                    e.stopPropagation();
+                    const titleSpan = historyItem.querySelector('.title');
+                    const editInput = historyItem.querySelector('.edit-title');
+                    titleSpan.style.display = 'none';
+                    editInput.style.display = 'block';
+                    editInput.focus();
+                }
+            };
+            const editInput = historyItem.querySelector('.edit-title');
+            editInput.onblur = () => {
+                const titleSpan = historyItem.querySelector('.title');
+                titleSpan.textContent = editInput.value;
+                titleSpan.style.display = 'block';
+                editInput.style.display = 'none';
+                // 这里可以添加保存新标题到本地存储的逻辑
+            };
+            editInput.onkeypress = (e) => {
+                if (e.key === 'Enter') {
+                    editInput.blur();
+                }
+            };
+            chatHistoryList.appendChild(historyItem);
+            updateActiveChat(id);
+        }
+
+        function updateActiveChat(chatId) {
+            document.querySelectorAll('.chat-history-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.chatId === chatId) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        function loadChat(chatId) {
+            clearChat();
+            currentChatId = chatId;
+            conversationId = null;
+            const chatHistory = JSON.parse(localStorage.getItem(chatId) || '[]');
+            chatHistory.forEach(msg => addMessage(msg.sender, msg.content));
+            updateActiveChat(chatId);
+        }
+
+        function clearChat() {
+            document.getElementById('chat-messages').innerHTML = '';
+        }
+
+        function saveChatMessage(chatId, sender, content) {
+            const chatHistory = JSON.parse(localStorage.getItem(chatId) || '[]');
+            chatHistory.push({ sender, content });
+            localStorage.setItem(chatId, JSON.stringify(chatHistory));
+        }
+
+        function deleteChat(chatId, event) {
+            event.stopPropagation(); // 阻止事件冒泡
+            const chatItem = document.querySelector(`.chat-history-item[data-chat-id="${chatId}"]`);
+            if (chatItem) {
+                chatItem.remove();
+                localStorage.removeItem(chatId);
+                if (currentChatId === chatId) {
+                    clearChat();
+                    currentChatId = null;
+                    conversationId = null;
+                }
+            }
+        }
+
+        document.querySelector('.new-chat-button').addEventListener('click', startChat);
     </script>
 </body>
 </html>
