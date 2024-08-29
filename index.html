@@ -70,11 +70,6 @@
             justify-content: center;
             width: 80%;
             box-sizing: border-box;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-        .new-chat-button.show {
-            opacity: 1;
         }
         .new-chat-button:hover {
             background-color: #e6ccb2;
@@ -309,27 +304,12 @@
             text-align: center;
             margin-top: 5px;
             padding: 0 20px;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-
-        .history-note.show {
-            opacity: 1;
-        }
-
-        .new-chat-button, .history-note {
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-
-        .new-chat-button.show, .history-note.show {
-            opacity: 1;
         }
     </style>
 </head>
 <body>
     <div class="chat-container">
-        <div class="chat-header">📈 R语言小精灵 v0.2</div>
+        <div class="chat-header">🧝‍♂️ R语言小精灵 📈 v0.2</div>
         <div class="chat-body">
             <div class="chat-sidebar">
                 <div class="sidebar-content">
@@ -369,7 +349,7 @@
     </div>
 
     <script>
-        const API_KEY = 'app-3VlBQgR45jfaiJEY80yil2vq';
+        const API_KEY = process.env.API_KEY;
         const API_URL = 'https://api.dify.ai/v1/chat-messages';
 
         let conversationId = null;
@@ -496,6 +476,7 @@
             currentChatId = null;
             conversationId = null;
             
+            // 发送"开始聊天"的查询，但不显示在界面上
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
@@ -532,19 +513,9 @@
             const chatHistoryList = document.querySelector('.chat-history-list');
             const historyItem = document.createElement('div');
             historyItem.className = 'chat-history-item';
-            
-            const formattedDate = new Date().toLocaleString('zh-CN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            });
-            
             historyItem.innerHTML = `
-                <span class="title">对话 ${formattedDate}</span>
-                <input type="text" class="edit-title" value="对话 ${formattedDate}">
+                <span class="title">${title}</span>
+                <input type="text" class="edit-title" value="${title}">
                 <button class="delete-chat" onclick="deleteChat('${id}', event)">×</button>
             `;
             historyItem.dataset.chatId = id;
@@ -569,6 +540,7 @@
                 titleSpan.textContent = editInput.value;
                 titleSpan.style.display = 'block';
                 editInput.style.display = 'none';
+                // 这里可以添加保存新标题到本地存储的逻辑
             };
             editInput.onkeypress = (e) => {
                 if (e.key === 'Enter') {
@@ -577,13 +549,6 @@
             };
             chatHistoryList.appendChild(historyItem);
             updateActiveChat(id);
-
-            showNewChatButtonAndHistoryNote();
-        }
-
-        function showNewChatButtonAndHistoryNote() {
-            document.querySelector('.new-chat-button').classList.add('show');
-            document.querySelector('.history-note').classList.add('show');
         }
 
         function updateActiveChat(chatId) {
@@ -615,7 +580,7 @@
         }
 
         function deleteChat(chatId, event) {
-            event.stopPropagation();
+            event.stopPropagation(); // 阻止事件冒泡
             const chatItem = document.querySelector(`.chat-history-item[data-chat-id="${chatId}"]`);
             if (chatItem) {
                 chatItem.remove();
