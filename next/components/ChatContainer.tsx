@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 import ChatSidebar from './ChatSidebar';
 import ChatMain from './ChatMain';
 import StartChatOverlay from './StartChatOverlay';
 
-const Container = styled.div`
+const Container = styled(motion.div)`
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: 1200px;
   height: 90vh;
-  background-color: #faf6f0;
+  background-color: rgba(250, 246, 240, 0.8);
   border-radius: 20px;
-  box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.1), 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   overflow: hidden;
   margin: 5vh auto;
+  backdrop-filter: blur(10px);
 `;
 
 const Header = styled.div`
@@ -38,7 +40,7 @@ const API_URL = 'https://api.dify.ai/v1/chat-messages';
 const ChatContainer: React.FC = () => {
   const [showOverlay, setShowOverlay] = useState(true);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
-  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [conversationIds, setConversationIds] = useState<{[key: string]: string | null}>({});
   const [userId] = useState('user_' + Math.random().toString(36).substr(2, 9));
   const [chatHistory, setChatHistory] = useState<Array<{ id: string; title: string }>>([]);
   const [initialMessage, setInitialMessage] = useState<{ sender: string; content: string; timestamp: string } | null>(null);
@@ -62,10 +64,9 @@ const ChatContainer: React.FC = () => {
   const createNewChat = async () => {
     const newChatId = `chat_${Date.now()}`;
     setCurrentChatId(newChatId);
-    setConversationId(null);
+    setConversationIds(prev => ({ ...prev, [newChatId]: null }));
     const message = await sendInitialMessage(newChatId);
     if (message) {
-      // 修改这里的日期格式
       const formattedDate = new Date().toLocaleString('zh-CN', {
         month: 'numeric',
         day: 'numeric',
@@ -101,7 +102,7 @@ const ChatContainer: React.FC = () => {
       if (response.ok && data.answer) {
         const message = { sender: 'Elf R', content: data.answer, timestamp: new Date().toLocaleTimeString() };
         localStorage.setItem(`messages_${chatId}`, JSON.stringify([message]));
-        setConversationId(data.conversation_id);
+        setConversationIds(prev => ({ ...prev, [chatId]: data.conversation_id }));
         return message;
       }
     } catch (error) {
@@ -111,7 +112,11 @@ const ChatContainer: React.FC = () => {
   };
 
   return (
-    <Container>
+    <Container
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <Header>🧝‍♂️ R语言小精灵 📈 v0.2</Header>
       <Body>
         <ChatSidebar 
@@ -123,11 +128,12 @@ const ChatContainer: React.FC = () => {
         />
         <ChatMain
           currentChatId={currentChatId}
-          conversationId={conversationId}
-          setConversationId={setConversationId}
+          conversationId={conversationIds[currentChatId] || null}
+          setConversationId={(id: string | null) => setConversationIds(prev => ({ ...prev, [currentChatId!]: id }))}
           userId={userId}
           initialMessage={initialMessage}
           setInitialMessage={setInitialMessage}
+          showOverlay={showOverlay}
         />
       </Body>
       {showOverlay && <StartChatOverlay onStart={startChat} />}

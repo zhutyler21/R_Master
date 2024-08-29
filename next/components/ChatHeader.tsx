@@ -11,7 +11,7 @@ const Header = styled.div`
 `;
 
 const ChatHeader: React.FC = () => {
-  return <Header>🧝‍♂️ R语言小精灵 📈 v0.2</Header>;
+  return <Header>📈 R语言小精灵v0.2</Header>;
 };
 
 export default ChatHeader;

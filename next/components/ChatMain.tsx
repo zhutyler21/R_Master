@@ -1,20 +1,44 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const Main = styled.div`
+const Main = styled.div<{ showOverlay: boolean }>`
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   background-color: #faf6f0;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  width: ${props => props.showOverlay ? 'calc(100% - 250px)' : 'calc(100% - 250px)'};
+  max-width: 950px;
 `;
 
 const Messages = styled.div`
   flex-grow: 1;
   padding: 20px;
   overflow-y: auto;
+  background: rgba(250, 246, 240, 0.8);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  color: #4a4a4a;
+  padding-right: 20px;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #d4b08c;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #faf6f0;
+  }
 `;
 
-const Message = styled.div<{ className: string }>`
+const Message = styled(motion.div)`
   max-width: 70%;
   margin-bottom: 20px;
   padding: 15px;
@@ -24,18 +48,11 @@ const Message = styled.div<{ className: string }>`
   font-size: 16px;
   display: flex;
   flex-direction: column;
-
-  &.ning {
-    background-color: #f5e6d3;
-    margin-right: auto;
-    border-bottom-left-radius: 0;
-  }
-
-  &.elf-r {
-    background-color: #e6ccb2;
-    margin-left: auto;
-    border-bottom-right-radius: 0;
-  }
+  background-color: ${({ className }) => (className === 'ning' ? '#e6ccb2' : '#d4b08c')};
+  margin-left: ${({ className }) => (className === 'ning' ? '0' : 'auto')};
+  margin-right: ${({ className }) => (className === 'ning' ? 'auto' : '0')};
+  border-bottom-left-radius: ${({ className }) => (className === 'ning' ? '20px' : '0')};
+  border-bottom-right-radius: ${({ className }) => (className === 'ning' ? '0' : '20px')};
 `;
 
 const MessageHeader = styled.div`
@@ -84,7 +101,7 @@ const CopyButton = styled.button`
 
 const TypingIndicator = styled.div`
   padding: 10px;
-  background-color: #f5e6d3;
+  background-color: #e6ccb2;
   border-radius: 20px;
   margin-bottom: 10px;
   display: none;
@@ -114,6 +131,8 @@ const InputArea = styled.div`
   padding: 20px;
   background-color: #faf6f0;
   border-top: 1px solid #e6ccb2;
+  border-radius: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 `;
 
 const Input = styled.input`
@@ -123,6 +142,7 @@ const Input = styled.input`
   border-radius: 30px;
   font-size: 16px;
   background-color: #fff;
+  color: #4a4a4a;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 `;
 
@@ -156,6 +176,7 @@ interface ChatMainProps {
   userId: string;
   initialMessage: { sender: string; content: string; timestamp: string } | null;
   setInitialMessage: React.Dispatch<React.SetStateAction<{ sender: string; content: string; timestamp: string } | null>>;
+  showOverlay: boolean;
 }
 
 const ChatMain: React.FC<ChatMainProps> = ({ 
@@ -164,7 +185,8 @@ const ChatMain: React.FC<ChatMainProps> = ({
   setConversationId, 
   userId, 
   initialMessage,
-  setInitialMessage
+  setInitialMessage,
+  showOverlay
 }) => {
   const [messages, setMessages] = useState<Array<{ sender: string; content: string; timestamp: string }>>([]);
   const [inputValue, setInputValue] = useState('');
@@ -259,22 +281,33 @@ const ChatMain: React.FC<ChatMainProps> = ({
   };
 
   return (
-    <Main>
+    <Main showOverlay={showOverlay}>
       <Messages>
-        {messages.map((msg, index) => (
-          <Message key={index} className={getSenderClass(msg.sender)}>
-            <MessageHeader>
-              <Sender>{msg.sender}</Sender>
-              <Timestamp>{msg.timestamp}</Timestamp>
-            </MessageHeader>
-            <MessageContent>{msg.content}</MessageContent>
-            {msg.sender === '~ Elf R 🕊️' && (
-              <MessageFooter>
-                <CopyButton onClick={() => copyMessage(msg.content)}>复制</CopyButton>
-              </MessageFooter>
-            )}
-          </Message>
-        ))}
+        <AnimatePresence>
+          {messages.map((msg, index) => (
+            <Message
+              key={index}
+              className={getSenderClass(msg.sender)}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -50 }}
+              transition={{ duration: 0.3 }}
+            >
+              <MessageHeader>
+                <Sender>{msg.sender}</Sender>
+                <Timestamp>{msg.timestamp}</Timestamp>
+              </MessageHeader>
+              <MessageContent>
+                {msg.content}
+              </MessageContent>
+              {msg.sender === '~ Elf R 🕊️' && (
+                <MessageFooter>
+                  <CopyButton onClick={() => copyMessage(msg.content)}>复制</CopyButton>
+                </MessageFooter>
+              )}
+            </Message>
+          ))}
+        </AnimatePresence>
         <div ref={messagesEndRef} />
       </Messages>
       <TypingIndicator style={{ display: isTyping ? 'block' : 'none' }}>

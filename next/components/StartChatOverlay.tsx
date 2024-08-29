@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 
-const Overlay = styled.div`
+const Overlay = styled(motion.div)`
   position: absolute;
   top: 0;
   left: 0;
@@ -14,7 +15,7 @@ const Overlay = styled.div`
   z-index: 1000;
 `;
 
-const Button = styled.button`
+const Button = styled(motion.button)`
   padding: 15px 30px;
   font-size: 20px;
   background: linear-gradient(135deg, #faf6f0, #e6ccb2);
@@ -38,8 +39,18 @@ interface StartChatOverlayProps {
 
 const StartChatOverlay: React.FC<StartChatOverlayProps> = ({ onStart }) => {
   return (
-    <Overlay>
-      <Button onClick={onStart}>开始聊天</Button>
+    <Overlay
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <Button
+        onClick={onStart}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        开始聊天
+      </Button>
     </Overlay>
   );
 };
