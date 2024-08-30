@@ -1,5 +1,5 @@
 {
-  "public": "public",
+  "outputDirectory": "public",
   "rewrites": [
     { "source": "/api/getApiKey", "destination": "/api/getApiKey.js" }
   ]
