@@ -405,31 +405,17 @@
     </div>
 
     <script>
-        let API_KEY = null;
+        let API_KEY = process.env.NEXT_PUBLIC_API_KEY; // Use environment variable
         const API_URL = 'https://api.dify.ai/v1/chat-messages';
 
         let conversationId = null;
         let currentChatId = null;
         const userId = 'user_' + Math.random().toString(36).substr(2, 9);
 
-        async function fetchApiKey() {
-            try {
-                const response = await fetch('/api/getApiKey');
-                const data = await response.json();
-                if (data.apiKey) {
-                    API_KEY = data.apiKey;
-                    console.log('API Key fetched successfully:', API_KEY); // Debugging log
-                } else {
-                    console.error('API Key not found in response:', data);
-                }
-            } catch (error) {
-                console.error('Error fetching API key:', error);
-            }
-        }
-
         async function sendMessage(userInput = null) {
             if (!API_KEY) {
-                await fetchApiKey();
+                console.error('API Key is not set');
+                return;
             }
 
             const input = userInput || document.getElementById('user-input').value;
@@ -681,9 +667,6 @@
         }
 
         document.querySelector('.new-chat-button').addEventListener('click', startChat);
-
-        // Call fetchApiKey on page load
-        fetchApiKey();
     </script>
 </body>
 </html>
