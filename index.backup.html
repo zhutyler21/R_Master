@@ -10,9 +10,9 @@
             font-family: 'Noto Sans SC', sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #f0f8ff, #e6e6fa, #ffe4e1, #f5f5dc);
+            background: linear-gradient(135deg, #f5e6d3, #e6ccb2);
             background-size: 400% 400%;
-            animation: gradientBackground 10s ease infinite;
+            animation: gradientBackground 15s ease infinite;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -23,44 +23,7 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        .start-chat-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('background.jpg'); /* Use the local image */
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: transform 1s ease;
-        }
-        .start-chat-text {
-            font-size: 60px; /* Updated font size */
-            font-weight: bold;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            font-family: 'Arial', sans-serif; /* Use a stylish font */
-        }
-        .start-chat-text:hover {
-            transform: scale(1.1);
-        }
-        .sub-text {
-            font-size: 38px; /* Updated font size */
-            font-style: italic;
-            color: white;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-            margin-top: 10px;
-            font-family: '黑体', sans-serif; /* Use a Chinese font */
-        }
         .chat-container {
-            display: none; /* Initially hidden */
             display: flex;
             flex-direction: column;
             width: 100%;
@@ -320,35 +283,27 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('background.jpg'); /* Use the local image */
-            background-size: cover;
-            background-position: center;
+            background-color: rgba(0, 0, 0, 0.5);
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            transition: transform 1s ease;
         }
-        .start-chat-text {
-            font-size: 60px; /* Updated font size */
-            font-weight: bold;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        .start-chat-button {
+            padding: 15px 30px;
+            font-size: 20px;
+            background: linear-gradient(135deg, #faf6f0, #e6ccb2);
+            color: #8b4513;
+            border: 2px solid #8b4513;
+            border-radius: 25px;
             cursor: pointer;
-            transition: transform 0.3s ease;
-            font-family: 'Arial', sans-serif; /* Use a stylish font */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        .start-chat-text:hover {
-            transform: scale(1.1);
-        }
-        .sub-text {
-            font-size: 38px; /* Updated font size */
-            font-style: italic;
-            color: white;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-            margin-top: 10px;
-            font-family: '黑体', sans-serif; /* Use a Chinese font */
+        .start-chat-button:hover {
+            background: linear-gradient(135deg, #e6ccb2, #d4b08c);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
         }
         .history-note {
             font-size: 12px;
@@ -360,10 +315,6 @@
     </style>
 </head>
 <body>
-    <div id="start-chat-overlay" class="start-chat-overlay">
-        <div class="start-chat-text" onclick="startChat()">Your Genius Elf R</div>
-        <div class="sub-text">AI让科学更优雅</div>
-    </div>
     <div class="chat-container">
         <div class="chat-header">🧝‍♂️ R语言小精灵 📈 v0.2</div>
         <div class="chat-body">
@@ -375,10 +326,7 @@
                     <div class="chat-history-list">
                         <!-- 历史对话记录将在这里动态添加 -->
                     </div>
-                    <div class="history-note">
-                        历史记录将在关闭窗口后清空
-                        <br>双击可修改名称
-                    </div>
+                    <div class="history-note">历史记录将在关闭窗口后清空</div>
                 </div>
                 <div class="author">© Tyler Coman 2024</div>
             </div>
@@ -402,6 +350,9 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div id="start-chat-overlay" class="start-chat-overlay">
+        <button onclick="startChat()" class="start-chat-button">开始聊天</button>
     </div>
 
     <script>
@@ -468,7 +419,7 @@
             const chatMessages = document.getElementById('chat-messages');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender.toLowerCase().replace(/\s+/g, '-')}`;
-            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // Removed year and seconds
+            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             
             if (sender === 'User') {
                 messageDiv.innerHTML = `
@@ -527,14 +478,12 @@
         }
 
         async function startChat() {
-            const overlay = document.getElementById('start-chat-overlay');
-            overlay.style.transform = 'translateY(-100%)'; // Animate the overlay out of view
-            setTimeout(() => {
-                overlay.style.display = 'none'; // Hide the overlay after animation
-                document.querySelector('.chat-container').style.display = 'flex'; // Show chat container
-            }, 1000);
-
-            // Send "开始聊天" query to LLM
+            document.getElementById('start-chat-overlay').style.display = 'none';
+            clearChat();
+            currentChatId = null;
+            conversationId = null;
+            
+            // 发送"开始聊天"的查询，但不显示在界面上
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
@@ -590,7 +539,6 @@
                     titleSpan.style.display = 'none';
                     editInput.style.display = 'block';
                     editInput.focus();
-                    editInput.select(); // Automatically select text
                 }
             };
             const editInput = historyItem.querySelector('.edit-title');
