@@ -491,7 +491,7 @@
             const chatMessages = document.getElementById('chat-messages');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender.toLowerCase().replace(/\s+/g, '-')}`;
-            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // Removed year and seconds
+            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // 
             
             if (sender === 'User') {
                 messageDiv.innerHTML = `
@@ -594,6 +594,11 @@
             const chatHistoryList = document.querySelector('.chat-history-list');
             const historyItem = document.createElement('div');
             historyItem.className = 'chat-history-item';
+            
+            // 修改时间格式，去掉秒数
+            const date = new Date();
+            const formattedDate = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+            
             historyItem.innerHTML = `
                 <span class="title">${title}</span>
                 <input type="text" class="edit-title" value="${title}">
