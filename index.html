@@ -416,7 +416,12 @@
             try {
                 const response = await fetch('/api/getApiKey');
                 const data = await response.json();
-                API_KEY = data.apiKey;
+                if (data.apiKey) {
+                    API_KEY = data.apiKey;
+                    console.log('API Key fetched successfully:', API_KEY); // Debugging log
+                } else {
+                    console.error('API Key not found in response:', data);
+                }
             } catch (error) {
                 console.error('Error fetching API key:', error);
             }
