@@ -413,6 +413,7 @@
         const userId = 'user_' + Math.random().toString(36).substr(2, 9);
 
         async function sendMessage(userInput = null) {
+            console.log('sendMessage called'); // Debugging log
             if (!API_KEY) {
                 console.error('API Key is not set');
                 return;
@@ -516,6 +517,10 @@
             if (e.key === 'Enter') {
                 sendMessage();
             }
+        });
+
+        document.querySelector('.send-button').addEventListener('click', function() {
+            sendMessage();
         });
 
         function copyMessage(button) {
@@ -666,6 +671,7 @@
             }
         }
 
+        // Ensure startChat is correctly bound
         document.querySelector('.new-chat-button').addEventListener('click', startChat);
     </script>
 </body>
