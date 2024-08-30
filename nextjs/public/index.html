@@ -477,7 +477,7 @@
             const chatMessages = document.getElementById('chat-messages');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender.toLowerCase().replace(/\s+/g, '-')}`;
-            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // 
+            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); 
             
             if (sender === 'User') {
                 messageDiv.innerHTML = `
