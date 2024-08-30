@@ -442,6 +442,9 @@
             showTypingIndicator();
 
             try {
+                console.log('Sending message:', input);
+                console.log('Using API Key:', API_KEY);
+
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
@@ -458,6 +461,7 @@
                 });
 
                 const data = await response.json();
+                console.log('API response:', data);
                 hideTypingIndicator();
 
                 if (response.ok) {
