@@ -405,14 +405,28 @@
     </div>
 
     <script>
-        const API_KEY = process.env.API_KEY; // 使用环境变量
+        let API_KEY = null;
         const API_URL = 'https://api.dify.ai/v1/chat-messages';
 
         let conversationId = null;
         let currentChatId = null;
         const userId = 'user_' + Math.random().toString(36).substr(2, 9);
 
+        async function fetchApiKey() {
+            try {
+                const response = await fetch('/api/getApiKey');
+                const data = await response.json();
+                API_KEY = data.apiKey;
+            } catch (error) {
+                console.error('Error fetching API key:', error);
+            }
+        }
+
         async function sendMessage(userInput = null) {
+            if (!API_KEY) {
+                await fetchApiKey();
+            }
+
             const input = userInput || document.getElementById('user-input').value;
             if (!input.trim()) return;
 
@@ -653,6 +667,9 @@
         }
 
         document.querySelector('.new-chat-button').addEventListener('click', startChat);
+
+        // Call fetchApiKey on page load
+        fetchApiKey();
     </script>
 </body>
 </html>
